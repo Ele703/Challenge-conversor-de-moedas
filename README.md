@@ -1,26 +1,177 @@
 # Challenge-conversor-de-moedas
+import java.util.Scanner;
 
-📌 Visão Geral
+public class ConversorMoedasConsole {
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        
+        // Taxas de câmbio (valores fictícios - num sistema real, você buscaria de uma API)
+        final double USD_TO_BRL = 5.30;  // 1 USD = 5.30 BRL
+        final double EUR_TO_BRL = 6.20;   // 1 EUR = 6.20 BRL
+        final double GBP_TO_BRL = 7.10;   // 1 GBP = 7.10 BRL
+        
+        System.out.println("=== CONVERSOR DE MOEDAS ===");
+        
+        // Menu de opções
+        System.out.println("1 - Dólar (USD) para Real (BRL)");
+        System.out.println("2 - Euro (EUR) para Real (BRL)");
+        System.out.println("3 - Libra (GBP) para Real (BRL)");
+        System.out.println("4 - Real (BRL) para Dólar (USD)");
+        System.out.println("5 - Real (BRL) para Euro (EUR)");
+        System.out.println("6 - Real (BRL) para Libra (GBP)");
+        
+        System.out.print("Escolha uma opção (1-6): ");
+        int opcao = scanner.nextInt();
+        
+        System.out.print("Digite o valor a ser convertido: ");
+        double valor = scanner.nextDouble();
+        
+        double resultado = 0;
+        String moedaOrigem = "", moedaDestino = "";
+        
+        switch(opcao) {
+            case 1:
+                resultado = valor * USD_TO_BRL;
+                moedaOrigem = "USD";
+                moedaDestino = "BRL";
+                break;
+            case 2:
+                resultado = valor * EUR_TO_BRL;
+                moedaOrigem = "EUR";
+                moedaDestino = "BRL";
+                break;
+            case 3:
+                resultado = valor * GBP_TO_BRL;
+                moedaOrigem = "GBP";
+                moedaDestino = "BRL";
+                break;
+            case 4:
+                resultado = valor / USD_TO_BRL;
+                moedaOrigem = "BRL";
+                moedaDestino = "USD";
+                break;
+            case 5:
+                resultado = valor / EUR_TO_BRL;
+                moedaOrigem = "BRL";
+                moedaDestino = "EUR";
+                break;
+            case 6:
+                resultado = valor / GBP_TO_BRL;
+                moedaOrigem = "BRL";
+                moedaDestino = "GBP";
+                break;
+            default:
+                System.out.println("Opção inválida!");
+                return;
+        }
+        
+        System.out.printf("%.2f %s = %.2f %s%n", valor, moedaOrigem, resultado, moedaDestino);
+        
+        scanner.close();
+    }
 
-Este projeto é um conversor de moedas que permite a conversão entre diferentes unidades monetárias. Disponível em duas versões:
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
-Versão Console: Aplicativo Java para terminal
+public class ConversorMoedasGUI {
+    public static void main(String[] args) {
+        // Taxas de câmbio
+        final double USD_TO_BRL = 5.30;
+        final double EUR_TO_BRL = 6.20;
+        final double GBP_TO_BRL = 7.10;
+        
+        // Configuração da janela
+        JFrame frame = new JFrame("Conversor de Moedas");
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setSize(400, 300);
+        frame.setLayout(new GridLayout(5, 2, 10, 10));
+        
+        // Componentes
+        JLabel lblValor = new JLabel("Valor:");
+        JTextField txtValor = new JTextField();
+        
+        JLabel lblDe = new JLabel("De:");
+        JComboBox<String> cmbDe = new JComboBox<>(new String[]{"BRL", "USD", "EUR", "GBP"});
+        
+        JLabel lblPara = new JLabel("Para:");
+        JComboBox<String> cmbPara = new JComboBox<>(new String[]{"USD", "BRL", "EUR", "GBP"});
+        
+        JButton btnConverter = new JButton("Converter");
+        JLabel lblResultado = new JLabel("Resultado: ");
+        
+        // Adicionando componentes à janela
+        frame.add(lblValor);
+        frame.add(txtValor);
+        frame.add(lblDe);
+        frame.add(cmbDe);
+        frame.add(lblPara);
+        frame.add(cmbPara);
+        frame.add(btnConverter);
+        frame.add(lblResultado);
+        
+        // Ação do botão
+        btnConverter.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                try {
+                    double valor = Double.parseDouble(txtValor.getText());
+                    String de = cmbDe.getSelectedItem().toString();
+                    String para = cmbPara.getSelectedItem().toString();
+                    
+                    double taxa = 1.0;
+                    
+                    // Conversão para BRL primeiro
+                    if (de.equals("USD")) {
+                        valor *= USD_TO_BRL;
+                    } else if (de.equals("EUR")) {
+                        valor *= EUR_TO_BRL;
+                    } else if (de.equals("GBP")) {
+                        valor *= GBP_TO_BRL;
+                    }
+                    
+                    // Conversão de BRL para moeda destino
+                    if (para.equals("USD")) {
+                        valor /= USD_TO_BRL;
+                    } else if (para.equals("EUR")) {
+                        valor /= EUR_TO_BRL;
+                    } else if (para.equals("GBP")) {
+                        valor /= GBP_TO_BRL;
+                    }
+                    
+                    lblResultado.setText(String.format("Resultado: %.2f %s", valor, para));
+                } catch (NumberFormatException ex) {
+                    lblResultado.setText("Digite um valor válido!");
+                }
+            }
+        });
+        
+        frame.setVisible(true);
+    }
+}
 
-Versão GUI: Aplicativo Java com interface gráfica usando Swing
+// Exemplo simplificado usando API (requer tratamento de JSON e conexão HTTP)
+// Você precisaria de bibliotecas como Gson para processar o JSON
 
-✨ Funcionalidades
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
 
-Conversão entre as principais moedas (BRL, USD, EUR, GBP)
-
-Interface simples e intuitiva
-
-Cálculos rápidos e precisos
-
-Possibilidade de expansão para mais moedas
-
-📥 Instalação
-
-Pré-requisitos
-Java JDK 11 ou superior
-
-Git (opcional)
+public class CotacaoAPI {
+    public static double getCotacao(String moeda) throws Exception {
+        String url = "https://api.exemplo.com/cotacao/" + moeda;
+        
+        HttpURLConnection conn = (HttpURLConnection) new URL(url).openConnection();
+        conn.setRequestMethod("GET");
+        
+        BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+        String response = reader.readLine();
+        reader.close();
+        
+        // Processar o JSON aqui e extrair o valor da cotação
+        // Exemplo simplificado:
+        return Double.parseDouble(response.split(":")[1].replace("}", "").trim());
+    }
+}
